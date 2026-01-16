@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\ProductCreated;
 use App\DTO\ProductDTO;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Collection;
@@ -26,7 +27,11 @@ class ProductService
 
     public function create(ProductDTO $dto): Product
     {
-        return Product::create($dto->toArray());
+        $product = Product::create($dto->toArray());
+        
+        broadcast(new ProductCreated($product));
+        
+        return $product;
     }
 
     public function update(Product $product, ProductDTO $dto): Product
