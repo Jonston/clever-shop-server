@@ -35,7 +35,6 @@ class ProductServer extends Server
         \App\Mcp\Tools\SearchProductsTool::class,
         \App\Mcp\Tools\UpdateProductTool::class,
         \App\Mcp\Tools\DeleteProductTool::class,
-        \App\Mcp\Tools\ApplyDiscountTool::class,
     ];
 
     /**
