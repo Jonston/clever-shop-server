@@ -14,7 +14,7 @@ class ProductTest extends TestCase
     {
         Product::factory()->count(3)->create();
 
-        $response = $this->getJson('/products');
+        $response = $this->getJson('/api/products');
 
         $response->assertStatus(200)
             ->assertJsonCount(3, 'data');
@@ -29,7 +29,7 @@ class ProductTest extends TestCase
             'category' => 'Test Category',
         ];
 
-        $response = $this->postJson('/products', $data);
+        $response = $this->postJson('/api/products', $data);
 
         $response->assertStatus(201)
             ->assertJson($data);
@@ -41,7 +41,7 @@ class ProductTest extends TestCase
     {
         $product = Product::factory()->create();
 
-        $response = $this->getJson("/products/{$product->id}");
+        $response = $this->getJson("/api/products/{$product->id}");
 
         $response->assertStatus(200)
             ->assertJson($product->toArray());
@@ -56,7 +56,7 @@ class ProductTest extends TestCase
             'price' => 149.99,
         ];
 
-        $response = $this->putJson("/products/{$product->id}", $data);
+        $response = $this->putJson("/api/products/{$product->id}", $data);
 
         $response->assertStatus(200)
             ->assertJson($data);
@@ -68,7 +68,7 @@ class ProductTest extends TestCase
     {
         $product = Product::factory()->create();
 
-        $response = $this->deleteJson("/products/{$product->id}");
+        $response = $this->deleteJson("/api/products/{$product->id}");
 
         $response->assertStatus(200)
             ->assertJson(['message' => 'Product deleted']);
@@ -78,14 +78,14 @@ class ProductTest extends TestCase
 
     public function test_returns_404_for_nonexistent_product(): void
     {
-        $response = $this->getJson('/products/999');
+        $response = $this->getJson('/api/products/999');
 
         $response->assertStatus(404);
     }
 
     public function test_validates_required_fields_on_create(): void
     {
-        $response = $this->postJson('/products', []);
+        $response = $this->postJson('/api/products', []);
 
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['name', 'price']);
@@ -98,7 +98,7 @@ class ProductTest extends TestCase
             'price' => 'not-a-number',
         ];
 
-        $response = $this->postJson('/products', $data);
+        $response = $this->postJson('/api/products', $data);
 
         $response->assertStatus(422)
             ->assertJsonValidationErrors('price');
