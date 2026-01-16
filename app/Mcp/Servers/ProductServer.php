@@ -30,6 +30,11 @@ class ProductServer extends Server
      * @var array<int, class-string<\Laravel\Mcp\Server\Tool>>
      */
     protected array $tools = [
+        \App\Mcp\Tools\CreateProductTool::class,
+        \App\Mcp\Tools\GetProductTool::class,
+        \App\Mcp\Tools\SearchProductsTool::class,
+        \App\Mcp\Tools\UpdateProductTool::class,
+        \App\Mcp\Tools\DeleteProductTool::class,
         \App\Mcp\Tools\ApplyDiscountTool::class,
     ];
 

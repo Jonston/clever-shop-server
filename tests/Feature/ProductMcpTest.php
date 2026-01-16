@@ -4,6 +4,11 @@ namespace Tests\Feature;
 
 use App\Mcp\Servers\ProductServer;
 use App\Mcp\Tools\ApplyDiscountTool;
+use App\Mcp\Tools\CreateProductTool;
+use App\Mcp\Tools\DeleteProductTool;
+use App\Mcp\Tools\GetProductTool;
+use App\Mcp\Tools\SearchProductsTool;
+use App\Mcp\Tools\UpdateProductTool;
 use App\Models\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -34,14 +39,72 @@ class ProductMcpTest extends TestCase
         $this->assertDatabaseHas('products', ['price' => 50]);  // books не изменились
     }
 
-    public function test_apply_discount_to_empty_category(): void
+    public function test_create_product_tool(): void
     {
-        $response = ProductServer::tool(ApplyDiscountTool::class, [
-            'category' => 'nonexistent',
-            'discount_percent' => 20,
+        $response = ProductServer::tool(CreateProductTool::class, [
+            'name' => 'New Product',
+            'price' => 99.99,
+            'category' => 'test',
         ]);
 
         $response->assertOk()
-            ->assertSee('No products found in category \'nonexistent\'.');
+            ->assertSee('Product \'New Product\' created');
+
+        $this->assertDatabaseHas('products', ['name' => 'New Product']);
+    }
+
+    public function test_get_product_tool(): void
+    {
+        $product = Product::factory()->create();
+
+        $response = ProductServer::tool(GetProductTool::class, [
+            'id' => $product->id,
+        ]);
+
+        $response->assertOk()
+            ->assertSee($product->name);
+    }
+
+    public function test_search_products_tool(): void
+    {
+        Product::factory()->create(['name' => 'Apple', 'category' => 'fruit']);
+        Product::factory()->create(['name' => 'Banana', 'category' => 'fruit']);
+
+        $response = ProductServer::tool(SearchProductsTool::class, [
+            'category' => 'fruit',
+        ]);
+
+        $response->assertOk()
+            ->assertSee('Apple')
+            ->assertSee('Banana');
+    }
+
+    public function test_update_product_tool(): void
+    {
+        $product = Product::factory()->create(['name' => 'Old Name']);
+
+        $response = ProductServer::tool(UpdateProductTool::class, [
+            'id' => $product->id,
+            'name' => 'New Name',
+        ]);
+
+        $response->assertOk()
+            ->assertSee('Product \'New Name\' updated');
+
+        $this->assertDatabaseHas('products', ['name' => 'New Name']);
+    }
+
+    public function test_delete_product_tool(): void
+    {
+        $product = Product::factory()->create();
+
+        $response = ProductServer::tool(DeleteProductTool::class, [
+            'id' => $product->id,
+        ]);
+
+        $response->assertOk()
+            ->assertSee('deleted');
+
+        $this->assertDatabaseMissing('products', ['id' => $product->id]);
     }
 }

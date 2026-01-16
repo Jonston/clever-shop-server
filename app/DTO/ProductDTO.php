@@ -14,9 +14,9 @@ class ProductDTO
     public static function fromArray(array $data): self
     {
         return new self(
-            name: $data['name'],
+            name: $data['name'] ?? '',
             description: $data['description'] ?? null,
-            price: (float) $data['price'],
+            price: isset($data['price']) ? (float) $data['price'] : 0.0,
             category: $data['category'] ?? null,
         );
     }
