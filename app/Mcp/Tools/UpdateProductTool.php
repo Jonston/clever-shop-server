@@ -26,7 +26,7 @@ class UpdateProductTool extends Tool
         $productService = app(ProductService::class);
         $product = $productService->find($request->get('id'));
 
-        if (!$product) {
+        if (! $product) {
             return Response::text('Product not found.');
         }
 
@@ -35,7 +35,7 @@ class UpdateProductTool extends Tool
             'description' => $request->get('description'),
             'price' => $request->get('price'),
             'category' => $request->get('category'),
-        ], fn($value) => $value !== null);
+        ], fn ($value) => $value !== null);
 
         $dto = ProductDTO::fromArray($data);
 

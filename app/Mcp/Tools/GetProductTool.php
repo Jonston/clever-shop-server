@@ -25,7 +25,7 @@ class GetProductTool extends Tool
         $productService = app(ProductService::class);
         $product = $productService->find($request->get('id'));
 
-        if (!$product) {
+        if (! $product) {
             return Response::text('Product not found.');
         }
 

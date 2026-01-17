@@ -38,7 +38,8 @@ class SearchProductsTool extends Tool
             return Response::text('No products found.');
         }
 
-        $result = $products->map(fn($p) => "{$p->id}: {$p->name} - {$p->price}")->join(', ');
+        $result = $products->map(fn ($p) => "{$p->id}: {$p->name} - {$p->price}")->join(', ');
+
         return Response::text("Found products: {$result}");
     }
 

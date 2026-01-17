@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\DTO\ProductDTO;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
-use App\Models\Product;
 use App\Services\ProductService;
 use Illuminate\Http\JsonResponse;
 
@@ -43,7 +42,7 @@ class ProductController extends Controller
     {
         $product = $this->productService->find($id);
 
-        if (!$product) {
+        if (! $product) {
             return response()->json(['message' => 'Product not found'], 404);
         }
 
@@ -57,7 +56,7 @@ class ProductController extends Controller
     {
         $product = $this->productService->find($id);
 
-        if (!$product) {
+        if (! $product) {
             return response()->json(['message' => 'Product not found'], 404);
         }
 
@@ -74,7 +73,7 @@ class ProductController extends Controller
     {
         $product = $this->productService->find($id);
 
-        if (!$product) {
+        if (! $product) {
             return response()->json(['message' => 'Product not found'], 404);
         }
 
