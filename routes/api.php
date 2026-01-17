@@ -14,6 +14,16 @@ Route::apiResource('products', ProductController::class);
 
 Route::post('/assistant', [AssistantController::class, 'process']);
 
+Route::get('/test-gemini', function () {
+    $result = \Gemini\Laravel\Facades\Gemini::generativeModel(model: 'gemini-2.0-flash')
+        ->generateContent('Say hello');
+
+    return response()->json([
+        'success' => true,
+        'response' => $result->text(),
+    ]);
+});
+
 Route::post('/test-event', function () {
     broadcast(new TestEvent('Hello from Laravel!'));
 
