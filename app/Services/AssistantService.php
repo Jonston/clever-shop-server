@@ -3,6 +3,11 @@
 namespace App\Services;
 
 use App\Events\AssistantMessage;
+use App\Events\AssistantProcessing;
+use App\Events\ProductCreated;
+use App\Events\ProductDeleted;
+use App\Events\ProductsListed;
+use App\Events\ProductUpdated;
 use App\Models\Product;
 use Gemini\Data\Content;
 use Gemini\Data\FunctionCall;
@@ -63,20 +68,20 @@ class AssistantService
             ->withTool(new Tool(functionDeclarations: $this->functionDeclarations))
             ->startChat();
 
-        $this->broadcastMessage('Processing your request...');
+        broadcast(new AssistantProcessing('started', 'Processing your request...'));
 
         $response = $chat->sendMessage($prompt);
 
         while ($response->parts()[0]->functionCall !== null) {
             $functionCall = $response->parts()[0]->functionCall;
-            $this->broadcastMessage("Executing: {$functionCall->name}");
+            broadcast(new AssistantProcessing($functionCall->name, "Executing: {$functionCall->name}"));
 
             $functionResponse = $this->handleFunctionCall($functionCall);
             $response = $chat->sendMessage($functionResponse);
         }
 
         $finalText = $response->text();
-        $this->broadcastMessage($finalText);
+        broadcast(new AssistantMessage($finalText));
 
         return $finalText;
     }
@@ -113,7 +118,10 @@ class AssistantService
             $query->where('category', $args['category']);
         }
 
-        return ['products' => $query->get()->toArray()];
+        $products = $query->get()->toArray();
+        broadcast(new ProductsListed($products, $args['category'] ?? null));
+
+        return ['products' => $products];
     }
 
     protected function getProduct(array $args): array
@@ -136,6 +144,8 @@ class AssistantService
             'category' => $args['category'],
         ]);
 
+        broadcast(new ProductCreated($product));
+
         return ['product' => $product->toArray(), 'message' => 'Product created successfully'];
     }
 
@@ -154,7 +164,10 @@ class AssistantService
             'category' => $args['category'] ?? null,
         ]));
 
-        return ['product' => $product->fresh()->toArray(), 'message' => 'Product updated successfully'];
+        $product->refresh();
+        broadcast(new ProductUpdated($product));
+
+        return ['product' => $product->toArray(), 'message' => 'Product updated successfully'];
     }
 
     protected function deleteProduct(array $args): array
@@ -165,7 +178,10 @@ class AssistantService
             return ['error' => 'Product not found'];
         }
 
+        $productId = $product->id;
         $product->delete();
+
+        broadcast(new ProductDeleted($productId));
 
         return ['message' => 'Product deleted successfully'];
     }
