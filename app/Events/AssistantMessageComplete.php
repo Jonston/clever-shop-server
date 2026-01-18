@@ -8,14 +8,14 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class AssistantProcessing implements ShouldBroadcast
+class AssistantMessageComplete implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public function __construct(
         public int $conversationId,
-        public string $action,
-        public string $message
+        public string $message,
+        public int $messageId
     ) {}
 
     public function broadcastOn(): array
@@ -27,14 +27,14 @@ class AssistantProcessing implements ShouldBroadcast
 
     public function broadcastAs(): string
     {
-        return 'assistant.processing';
+        return 'message.complete';
     }
 
     public function broadcastWith(): array
     {
         return [
-            'action' => $this->action,
             'message' => $this->message,
+            'message_id' => $this->messageId,
         ];
     }
 }
