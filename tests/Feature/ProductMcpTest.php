@@ -18,10 +18,13 @@ class ProductMcpTest extends TestCase
 
     public function test_create_product_tool(): void
     {
+        $category = \App\Models\Category::factory()->create();
+
         $response = ProductServer::tool(CreateProductTool::class, [
             'name' => 'New Product',
             'price' => 99.99,
-            'category' => 'test',
+            'discount' => 5.0,
+            'category_id' => $category->id,
         ]);
 
         $response->assertOk()
@@ -44,8 +47,9 @@ class ProductMcpTest extends TestCase
 
     public function test_search_products_tool(): void
     {
-        Product::factory()->create(['name' => 'Apple', 'category' => 'fruit']);
-        Product::factory()->create(['name' => 'Banana', 'category' => 'fruit']);
+        $category = \App\Models\Category::factory()->create(['name' => 'fruit']);
+        Product::factory()->create(['name' => 'Apple', 'category_id' => $category->id]);
+        Product::factory()->create(['name' => 'Banana', 'category_id' => $category->id]);
 
         $response = ProductServer::tool(SearchProductsTool::class, [
             'category' => 'fruit',

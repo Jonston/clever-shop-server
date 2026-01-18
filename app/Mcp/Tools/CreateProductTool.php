@@ -27,7 +27,8 @@ class CreateProductTool extends Tool
             'name' => $request->get('name'),
             'description' => $request->get('description'),
             'price' => $request->get('price'),
-            'category' => $request->get('category'),
+            'discount' => $request->get('discount'),
+            'category_id' => $request->get('category_id'),
         ]);
 
         $productService = app(ProductService::class);
@@ -47,7 +48,8 @@ class CreateProductTool extends Tool
             'name' => $schema->string('Product name')->required(),
             'description' => $schema->string('Product description'),
             'price' => $schema->number('Product price')->required(),
-            'category' => $schema->string('Product category'),
+            'discount' => $schema->number('Product discount'),
+            'category_id' => $schema->integer('Product category ID'),
         ];
     }
 }

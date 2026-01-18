@@ -22,11 +22,14 @@ class ProductTest extends TestCase
 
     public function test_can_create_product(): void
     {
+        $category = \App\Models\Category::factory()->create();
+
         $data = [
             'name' => 'Test Product',
             'description' => 'Test Description',
             'price' => 99.99,
-            'category' => 'Test Category',
+            'discount' => 10.0,
+            'category_id' => $category->id,
         ];
 
         $response = $this->postJson('/api/products', $data);

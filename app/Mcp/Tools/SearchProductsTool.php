@@ -25,7 +25,7 @@ class SearchProductsTool extends Tool
         $query = Product::query();
 
         if ($category = $request->get('category')) {
-            $query->where('category', $category);
+            $query->whereHas('category', fn ($q) => $q->where('name', 'like', "%{$category}%"));
         }
 
         if ($name = $request->get('name')) {

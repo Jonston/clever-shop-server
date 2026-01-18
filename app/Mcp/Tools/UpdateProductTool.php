@@ -34,7 +34,8 @@ class UpdateProductTool extends Tool
             'name' => $request->get('name'),
             'description' => $request->get('description'),
             'price' => $request->get('price'),
-            'category' => $request->get('category'),
+            'discount' => $request->get('discount'),
+            'category_id' => $request->get('category_id'),
         ], fn ($value) => $value !== null);
 
         $dto = ProductDTO::fromArray($data);
@@ -56,7 +57,8 @@ class UpdateProductTool extends Tool
             'name' => $schema->string('New product name'),
             'description' => $schema->string('New product description'),
             'price' => $schema->number('New product price'),
-            'category' => $schema->string('New product category'),
+            'discount' => $schema->number('New product discount'),
+            'category_id' => $schema->integer('New product category ID'),
         ];
     }
 }
