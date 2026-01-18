@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Models\Conversation;
 use App\Models\Message;
-use App\Models\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -37,7 +36,7 @@ class ChatSystemTest extends TestCase
         Conversation::create(['session_id' => $sessionId, 'status' => 'active']);
         Conversation::create(['session_id' => $sessionId, 'status' => 'active']);
 
-        $response = $this->getJson('/api/conversations?session_id=' . $sessionId);
+        $response = $this->getJson('/api/conversations?session_id='.$sessionId);
 
         $response->assertStatus(200)
             ->assertJsonCount(2, 'conversations');
@@ -176,4 +175,3 @@ class ChatSystemTest extends TestCase
         $response->assertStatus(403);
     }
 }
-

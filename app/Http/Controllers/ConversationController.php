@@ -28,7 +28,7 @@ class ConversationController extends Controller
     {
         $conversation = Conversation::with('messages')->find($id);
 
-        if (!$conversation) {
+        if (! $conversation) {
             return response()->json(['error' => 'Conversation not found'], 404);
         }
 
@@ -38,7 +38,7 @@ class ConversationController extends Controller
         }
 
         $sessionId = $request->input('session_id');
-        if ($conversation->session_id && $conversation->session_id !== $sessionId && !$request->user()) {
+        if ($conversation->session_id && $conversation->session_id !== $sessionId && ! $request->user()) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
@@ -56,7 +56,7 @@ class ConversationController extends Controller
         $sessionId = null;
         $userId = $request->user()?->id;
 
-        if (!$userId) {
+        if (! $userId) {
             $sessionId = Conversation::generateSessionId();
         }
 
@@ -76,7 +76,7 @@ class ConversationController extends Controller
     {
         $conversation = Conversation::find($id);
 
-        if (!$conversation) {
+        if (! $conversation) {
             return response()->json(['error' => 'Conversation not found'], 404);
         }
 
@@ -92,7 +92,7 @@ class ConversationController extends Controller
     {
         $conversation = Conversation::find($id);
 
-        if (!$conversation) {
+        if (! $conversation) {
             return response()->json(['error' => 'Conversation not found'], 404);
         }
 
@@ -104,4 +104,3 @@ class ConversationController extends Controller
         ]);
     }
 }
-

@@ -68,7 +68,7 @@ class ProductService
     {
         $product = Product::find($args['id']);
 
-        if (!$product) {
+        if (! $product) {
             return ['error' => 'Product not found'];
         }
 
@@ -93,7 +93,7 @@ class ProductService
     {
         $product = Product::find($args['id']);
 
-        if (!$product) {
+        if (! $product) {
             return ['error' => 'Product not found'];
         }
 
@@ -114,7 +114,7 @@ class ProductService
     {
         $product = Product::find($args['id']);
 
-        if (!$product) {
+        if (! $product) {
             return ['error' => 'Product not found'];
         }
 
@@ -126,4 +126,3 @@ class ProductService
         return ['message' => 'Product deleted successfully'];
     }
 }
-

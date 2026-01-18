@@ -8,9 +8,7 @@ use Illuminate\Http\Request;
 
 class ChatController extends Controller
 {
-    public function __construct(protected ChatAssistantService $chatService)
-    {
-    }
+    public function __construct(protected ChatAssistantService $chatService) {}
 
     public function sendMessage(Request $request): JsonResponse
     {
@@ -36,4 +34,3 @@ class ChatController extends Controller
         }
     }
 }
-

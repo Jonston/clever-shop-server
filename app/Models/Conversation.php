@@ -74,6 +74,7 @@ class Conversation extends Model
 
         // Create new guest conversation
         $newSessionId = static::generateSessionId();
+
         return static::create([
             'session_id' => $newSessionId,
             'status' => 'active',

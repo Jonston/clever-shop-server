@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Log;
 class ChatAssistantService
 {
     protected array $functionDeclarations = [];
+
     protected array $functionHandlers = [];
 
     public function __construct(protected ProductService $productService)
@@ -45,7 +46,7 @@ class ChatAssistantService
         // Get or create conversation
         if ($conversationId) {
             $conversation = Conversation::find($conversationId);
-            if (!$conversation) {
+            if (! $conversation) {
                 throw new \Exception('Conversation not found');
             }
             $this->validateAccess($conversation, $userId, $sessionId);
@@ -60,7 +61,7 @@ class ChatAssistantService
         $conversation->update(['last_message_at' => now()]);
 
         // Generate title if not exists
-        if (!$conversation->title) {
+        if (! $conversation->title) {
             $conversation->generateTitle();
         }
 
@@ -136,7 +137,7 @@ class ChatAssistantService
             broadcast(new AssistantIterationComplete(
                 $conversation->id,
                 $iteration,
-                implode(', ', array_map(fn($fc) => $fc->name, $functionCalls)),
+                implode(', ', array_map(fn ($fc) => $fc->name, $functionCalls)),
                 $iterationTime
             ));
         }
@@ -229,7 +230,7 @@ class ChatAssistantService
             throw new \Exception('Unauthorized access to conversation');
         }
 
-        if ($conversation->session_id && $conversation->session_id !== $sessionId && !$userId) {
+        if ($conversation->session_id && $conversation->session_id !== $sessionId && ! $userId) {
             throw new \Exception('Unauthorized access to conversation');
         }
     }
@@ -303,7 +304,7 @@ class ChatAssistantService
      */
     protected function executeFunction(FunctionCall $functionCall): array
     {
-        if (!isset($this->functionHandlers[$functionCall->name])) {
+        if (! isset($this->functionHandlers[$functionCall->name])) {
             return ['error' => 'Unknown function'];
         }
 
@@ -354,11 +355,11 @@ class ChatAssistantService
     protected function registerFunctionHandlers(): void
     {
         $this->functionHandlers = [
-            'list_products' => fn($args) => $this->productService->listProducts($args),
-            'get_product' => fn($args) => $this->productService->getProduct($args),
-            'create_product' => fn($args) => $this->productService->createProduct($args),
-            'update_product' => fn($args) => $this->productService->updateProduct($args),
-            'delete_product' => fn($args) => $this->productService->deleteProduct($args),
+            'list_products' => fn ($args) => $this->productService->listProducts($args),
+            'get_product' => fn ($args) => $this->productService->getProduct($args),
+            'create_product' => fn ($args) => $this->productService->createProduct($args),
+            'update_product' => fn ($args) => $this->productService->updateProduct($args),
+            'delete_product' => fn ($args) => $this->productService->deleteProduct($args),
         ];
     }
 }
