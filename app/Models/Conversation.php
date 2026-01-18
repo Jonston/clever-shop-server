@@ -54,10 +54,15 @@ class Conversation extends Model
         return Str::uuid()->toString();
     }
 
+    /**
+     * Find or create a conversation for the owner.
+     * This returns the FIRST active conversation if no specific conversation_id is provided.
+     * Users can have multiple conversations by explicitly creating them via the API.
+     */
     public static function findOrCreateForOwner(?int $userId, ?string $sessionId): self
     {
         if ($userId) {
-            // For authenticated users, find the latest active conversation or create new
+            // For authenticated users, reuse the first active conversation or create new
             return static::firstOrCreate(
                 ['user_id' => $userId, 'status' => 'active'],
                 ['title' => null]

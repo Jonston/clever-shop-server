@@ -72,12 +72,22 @@ class ConversationController extends Controller
         ], 201);
     }
 
-    public function destroy(int $id): JsonResponse
+    public function destroy(Request $request, int $id): JsonResponse
     {
         $conversation = Conversation::find($id);
 
         if (! $conversation) {
             return response()->json(['error' => 'Conversation not found'], 404);
+        }
+
+        // Validate access
+        if ($conversation->user_id && $conversation->user_id !== $request->user()?->id) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $sessionId = $request->input('session_id');
+        if ($conversation->session_id && $conversation->session_id !== $sessionId && ! $request->user()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
         }
 
         $conversation->update(['status' => 'deleted']);
@@ -88,12 +98,22 @@ class ConversationController extends Controller
         ]);
     }
 
-    public function archive(int $id): JsonResponse
+    public function archive(Request $request, int $id): JsonResponse
     {
         $conversation = Conversation::find($id);
 
         if (! $conversation) {
             return response()->json(['error' => 'Conversation not found'], 404);
+        }
+
+        // Validate access
+        if ($conversation->user_id && $conversation->user_id !== $request->user()?->id) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $sessionId = $request->input('session_id');
+        if ($conversation->session_id && $conversation->session_id !== $sessionId && ! $request->user()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
         }
 
         $conversation->update(['status' => 'archived']);

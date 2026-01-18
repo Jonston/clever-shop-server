@@ -71,7 +71,7 @@ class ChatSystemTest extends TestCase
             'status' => 'active',
         ]);
 
-        $response = $this->postJson("/api/conversations/{$conversation->id}/archive");
+        $response = $this->postJson("/api/conversations/{$conversation->id}/archive?session_id=test-session");
 
         $response->assertStatus(200);
 
@@ -88,7 +88,7 @@ class ChatSystemTest extends TestCase
             'status' => 'active',
         ]);
 
-        $response = $this->deleteJson("/api/conversations/{$conversation->id}");
+        $response = $this->deleteJson("/api/conversations/{$conversation->id}?session_id=test-session");
 
         $response->assertStatus(200);
 
@@ -171,6 +171,30 @@ class ChatSystemTest extends TestCase
         ]);
 
         $response = $this->getJson("/api/conversations/{$conversation->id}?session_id=wrong-session");
+
+        $response->assertStatus(403);
+    }
+
+    public function test_cannot_delete_conversation_without_access(): void
+    {
+        $conversation = Conversation::create([
+            'session_id' => 'test-session',
+            'status' => 'active',
+        ]);
+
+        $response = $this->deleteJson("/api/conversations/{$conversation->id}?session_id=wrong-session");
+
+        $response->assertStatus(403);
+    }
+
+    public function test_cannot_archive_conversation_without_access(): void
+    {
+        $conversation = Conversation::create([
+            'session_id' => 'test-session',
+            'status' => 'active',
+        ]);
+
+        $response = $this->postJson("/api/conversations/{$conversation->id}/archive?session_id=wrong-session");
 
         $response->assertStatus(403);
     }
